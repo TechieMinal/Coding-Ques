@@ -1,0 +1,342 @@
+Explain the concept of a prefix sum array and its applications.
+
+A prefix sum array is a data structure used to store cumulative sums of elements from the start of an array up to each index. It enables O(1) range sum queries.
+
+Applications:
+Range Sum Queries: Quickly calculate sums of subarrays.
+Equilibrium Index: Find where left and right sums are equal.
+Sliding Window Problems: Efficiently compute window sums.
+Algorithm Optimization: Used in problems like counting subarrays with given sums.
+It's code-
+public class PrefixSumApplication {
+    public static void main(String[] args) {
+        int[] arr = {2, 4, 6, 8, 10};
+        int[][] queries = {{1, 3}, {0, 4}}; // Queries: [L, R]
+
+        // Build prefix sum array
+        int[] prefix = new int[arr.length];
+        prefix[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            prefix[i] = prefix[i - 1] + arr[i];
+        }
+
+        // Process queries
+        for (int[] query : queries) {
+            int L = query[0];
+            int R = query[1];
+            int sum = prefix[R] - (L == 0 ? 0 : prefix[L - 1]);
+            System.out.println("Sum from index " + L + " to " + R + ": " + sum);
+        }
+    }
+}
+Ques 2 - Write a program to find the sum of elements in a given range [L, R] using a prefix sum
+array. Write its algorithm, program. Find its time and space complexities. Explain with
+suitable example.
+
+Algorithm :
+
+Initialize:
+Create a prefix sum array prefix[] of the same size as the input array arr[].
+
+Build Prefix Array:
+Set prefix[0] = arr[0] (first element remains the same).
+For each index i from 1 to n-1:
+prefix[i] = prefix[i-1] + arr[i] (cumulative sum).
+
+Process Queries:
+For each query [L, R]:
+If L == 0, the sum is prefix[R].
+Else, sum = prefix[R] - prefix[L-1].
+
+Java Code -
+public class RangeSumPrefix {
+    public static void main(String[] args) {
+        int[] arr = {10, 20, 30, 40, 50};  // Input array
+        int[][] queries = {{1, 3}, {0, 4}}; // Queries: [L, R]
+
+        // Step 1: Initialize prefix array
+        int[] prefix = new int[arr.length];
+        
+        // Step 2: Build prefix array
+        prefix[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            prefix[i] = prefix[i - 1] + arr[i];
+        }
+
+        // Step 3: Process queries
+        for (int[] query : queries) {
+            int L = query[0];
+            int R = query[1];
+            int sum;
+            if (L == 0) {
+                sum = prefix[R];
+            } else {
+                sum = prefix[R] - prefix[L - 1];
+            }
+            System.out.println("Sum from index " + L + " to " + R + ": " + sum);
+        }
+    }
+}
+
+T.C - O(n)
+SC - O(n)
+
+Example - 
+
+Input Array: [1, 3, 5, 7, 9]
+Prefix Array: [1, 4, 9, 16, 25]
+Query [1, 3]: prefix[3] - prefix[0] = 16 - 1 = 15 (sum of 3+5+7).
+Query [0, 4]: prefix[4] = 25 (sum of all elements).
+
+  Ques 50. Explain the concept of equilibrium index and its applications in array problems.
+An equilibrium index in an array is an index where the sum of elements before it (left subarray) is equal to the sum of elements after it (right subarray).
+
+Formally: For an array arr[], index i is an equilibrium index if:
+arr[0] + arr[1] + ... + arr[i-1] = arr[i+1] + arr[i+2] + ... + arr[n-1].
+
+Applications:
+Partitioning Arrays:
+Split arrays into two parts with equal sums (e.g., for load balancing).
+
+Algorithm Design:
+Used in problems like pivot indices (similar to equilibrium index).
+
+Data Analysis:
+Identify points where cumulative distributions balance (e.g., in statistics).
+
+Dynamic Programming:
+Preprocessing arrays for quick sum queries (prefix/suffix sums).
+
+Example:
+Input Array: [1, 2, 3, 4, 3, 2, 1]
+Equilibrium Index: 3 (Value = 4)
+Left sum: 1 + 2 + 3 = 6
+Right sum: 3 + 2 + 1 = 6
+
+  3. Solve the problem of finding the equilibrium index in an array. Write its algorithm,
+program. Find its time and space complexities. Explain with suitable example.
+
+Algorithm :
+Calculate Total Sum:
+Compute the total sum of all elements in the array.
+
+Track Left Sum:
+Initialize left_sum = 0.
+
+For each index i from 0 to n-1:
+Calculate right_sum = total_sum - left_sum - arr[i].
+If left_sum == right_sum, return i.
+Update left_sum += arr[i].
+Return -1 if no equilibrium index found.
+
+  Code -
+public class EquilibriumIndex {
+    public static int findEquilibrium(int[] arr) {
+        int totalSum = 0;
+        for (int num : arr) {
+            totalSum += num;
+        }
+
+        int leftSum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            int rightSum = totalSum - leftSum - arr[i];
+            if (leftSum == rightSum) {
+                return i;
+            }
+            leftSum += arr[i];
+        }
+        return -1; // No equilibrium index
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {-7, 1, 5, 2, -4, 3, 0};
+        int eqIndex = findEquilibrium(arr);
+        System.out.println("Equilibrium Index: " + eqIndex);
+    }
+}
+
+TC - O(n)
+SC - O(1)
+
+    Ques 4 : Check if an array can be split into two parts such that the sum of the prefix equals the
+sum of the suffix. Write its algorithm, program. Find its time and space complexities.
+Explain with suitable example.
+
+Algorithm
+Calculate Total Sum:
+Compute the sum of all elements in the array.
+
+Track Left Sum:
+Initialize left_sum = 0.
+For each element in the array:
+Subtract the current element from the total sum to get the right_sum.
+If left_sum == right_sum, return true.
+Add the current element to left_sum.
+Return false if no such point is found.
+
+Code - 
+
+public class SplitArray {
+    public static boolean canSplit(int[] arr) {
+        int totalSum = 0;
+        for (int num : arr) {
+            totalSum += num;
+        }
+
+        int leftSum = 0;
+        for (int num : arr) {
+            totalSum -= num; // Now, totalSum represents rightSum
+            if (leftSum == totalSum) {
+                return true;
+            }
+            leftSum += num;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        int[] arr1 = {1, 2, 3, 4, 5, 5}; // True (1+2+3+4 = 10, 5+5 = 10)
+        int[] arr2 = {2, 4, 6, 8};       // False
+        System.out.println(canSplit(arr1)); // Output: true
+        System.out.println(canSplit(arr2)); // Output: false
+    }
+}
+TC - O(n)
+SC - (1)
+
+    Ques 5 Find the maximum sum of any subarray of size K in a given array. Write its algorithm,
+program. Find its time and space complexities. Explain with suitable example.
+
+Algorithm:
+Initialize:
+Calculate the sum of the first K elements (window_sum).
+Set max_sum = window_sum.
+
+Slide the Window:
+For each subsequent window (from index K to n-1):
+Subtract the outgoing element (leftmost of the previous window).
+Add the incoming element (new rightmost element).
+Update max_sum if the current window_sum is greater.
+Return max_sum.
+
+Code - 
+
+public class MaxSubarraySumK {
+    public static int maxSum(int[] arr, int K) {
+        int n = arr.length;
+        if (n < K) return -1; // Edge case
+
+        // Initial window sum
+        int window_sum = 0;
+        for (int i = 0; i < K; i++) {
+            window_sum += arr[i];
+        }
+        int max_sum = window_sum;
+
+        // Slide the window
+        for (int i = K; i < n; i++) {
+            window_sum += arr[i] - arr[i - K]; // Add new element, remove old element
+            max_sum = Math.max(max_sum, window_sum);
+        }
+
+        return max_sum;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {2, 1, 5, 1, 3, 2};
+        int K = 3;
+        System.out.println(maxSum(arr, K)); // Output: 9 (5 + 1 + 3)
+    }
+}
+
+TC -(n)
+SC = (1)
+
+    Ques 6 - Find the length of the longest substring without repeating characters. Write its
+algorithm, program. Find its time and space complexities. Explain with suitable
+example.
+
+Algorithm:
+Initialize:
+A hash set to track characters in the current window.
+Pointers left and right to represent the window bounds.
+max_len to store the result.
+
+Expand Window:
+Move right forward, adding new characters to the set.
+If a duplicate is found, shrink the window from left until all duplicates are removed.
+
+Update Result:
+After each expansion, calculate the current window size (right - left + 1) and update max_len.
+
+Code - 
+import java.util.HashSet;
+import java.util.Set;
+
+public class LongestUniqueSubstring {
+    public static int lengthOfLongestSubstring(String s) {
+        Set<Character> window = new HashSet<>();
+        int left = 0, max_len = 0;
+        
+        for (int right = 0; right < s.length(); right++) {
+            char c = s.charAt(right);
+            while (window.contains(c)) { // Shrink window if duplicate found
+                window.remove(s.charAt(left));
+                left++;
+            }
+            window.add(c);
+            max_len = Math.max(max_len, right - left + 1);
+        }
+        return max_len;
+    }
+
+    public static void main(String[] args) {
+        String input = "abcabcbb";
+        System.out.println(lengthOfLongestSubstring(input)); // Output: 3 ("abc")
+    }
+}
+
+TC- O(n)
+SC- O(min(m, n))
+
+  Ques 7. Explain the sliding window technique and its use in string problems.
+
+The sliding window technique is an algorithmic paradigm where a "window" (a subarray or substring) is moved through a linear data structure (array/string) to efficiently solve problems requiring analysis of contiguous subsequences.
+
+2. Key Characteristics
+Window Types:
+Fixed-size: Window length remains constant .
+Variable-size: Window expands/shrinks based on conditions .
+Efficiency: Reduces time complexity from O(n²) (brute-force) to O(n) by reusing computations.
+
+3. Algorithmic Steps
+Initialize:
+Window pointers (left, right) to mark the current window.
+Data structures (e.g., hash set/map) to track window properties.
+
+Expand:
+Move right to include new elements until a condition is violated.
+Shrink (for variable-size):Move left to exclude elements until the condition is restored.
+
+Update Result:
+Track the optimal solution during each iteration.
+Code- 
+int left = 0, result = 0;
+Set<Character> window = new HashSet<>();
+
+for (int right = 0; right < s.length(); right++) {
+    while (window.contains(s.charAt(right))) { // Condition violated
+        window.remove(s.charAt(left));
+        left++;
+    }
+    window.add(s.charAt(right));
+    result = Math.max(result, right - left + 1); // Update result
+}
+return result;
+
+
+3
+
+
+
+
